@@ -1,3 +1,2 @@
-weather-getter
 influxdb>=5.2.3
 

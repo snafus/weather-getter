@@ -12,8 +12,11 @@ def prepare_current_weather(j):
     d['tz'  ] = j['timezone']
     d['dt'  ] = datetime.datetime.fromtimestamp(j['dt'])
 
-    d['wind_speed'] = j['wind']['speed']
-    d['wind_dir'  ] = j['wind']['deg']
+    if 'wind' in j:
+        d['wind_speed'] = j['wind']['speed']
+        d['wind_dir'  ] = j['wind']['deg']
+    else:
+        pass
 
     d['pressure'  ]   = j['main']['pressure']
     d['humidity'  ]   = j['main']['humidity']

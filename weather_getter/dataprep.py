@@ -2,6 +2,14 @@ import json
 import datetime
 from collections import OrderedDict
 
+def try_retrieve(thedict,key,defaultval):
+    """Helper method to return values, else default
+    """
+    if key not in thedict:
+        return defaultval
+    else:
+        return thedict[key]
+
 def prepare_current_weather(j):
     """Prepare a dict of parameters from the input dict
     """
@@ -13,17 +21,18 @@ def prepare_current_weather(j):
     d['dt'  ] = datetime.datetime.fromtimestamp(j['dt'])
 
     if 'wind' in j:
-        d['wind_speed'] = j['wind']['speed']
-        d['wind_dir'  ] = j['wind']['deg']
+        d['wind_speed'] = try_retrieve(j['wind'],'speed',-1)
+        d['wind_dir'  ] = try_retrieve(j['wind'],'deg'  ,-1)
+        d['wind_gust' ] = try_retrieve(j['wind'],'gust' ,-1)
     else:
         pass
 
-    d['pressure'  ]   = j['main']['pressure']
-    d['humidity'  ]   = j['main']['humidity']
-    d['temp'      ]   = j['main']['temp']
-    d['feels_like']   = j['main']['feels_like']
-    d['visibility']   = j['visibility']
-    d['clouds_all']   = j['clouds']['all']
+    d['pressure'  ]   = try_retrieve(j['main'],'pressure',-1)
+    d['humidity'  ]   = try_retrieve(j['main'],'humidity',-1)
+    d['temp'      ]   = try_retrieve(j['main'],'temp',-999)
+    d['feels_like']   = try_retrieve(j['main'],'feels_like',-999)
+    d['visibility']   = try_retrieve(j,'visibility',-1)
+    d['clouds_all']   = try_retrieve(j['clouds'],'all',-1)
 
     return d
 
@@ -77,14 +86,15 @@ def prepare_forecast_weather(j):
     for l in j['list']:
         d = OrderedDict(r)
         d['dt'  ] = datetime.datetime.fromtimestamp(l['dt'])
-        d['wind_speed'] = l['wind']['speed']
-        d['wind_dir'  ] = l['wind']['deg']
+        d['wind_speed'] = try_retrieve(l['wind'],'speed',-1)
+        d['wind_dir'  ] = try_retrieve(l['wind'],'deg',-1)
+        d['wind_gust' ] = try_retrieve(l['wind'],'gust' ,-1)
 
-        d['pressure'  ]   = l['main']['pressure']
-        d['humidity'  ]   = l['main']['humidity']
-        d['temp'      ]   = l['main']['temp']
-        d['feels_like']   = l['main']['feels_like']
-        d['clouds_all']   = l['clouds']['all']
+        d['pressure'  ]   = try_retrieve(l['main']  ,'pressure',-1)
+        d['humidity'  ]   = try_retrieve(l['main']  ,'humidity',-1)
+        d['temp'      ]   = try_retrieve(l['main']  ,'temp',-999)
+        d['feels_like']   = try_retrieve(l['main']  ,'feels_like',-999)
+        d['clouds_all']   = try_retrieve(l['clouds'],'all',-1)
 
         d['rain_3h' ]    = 0 if not 'rain' in l else l['rain']['3h']
         forecasts.append(d)

@@ -40,6 +40,7 @@ if __name__ == '__main__':
                                         lon = float(cf['DEFAULT']['lon']),
                                         apikey =    cf['DEFAULT']['key'],
                                         )
+        #print(j)
         d = dataprep.prepare_current_weather(j)
         if args.printResults:
             pretty_dict(d)
